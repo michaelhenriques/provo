@@ -41,10 +41,29 @@ class Scroll {
     this.velocityVisualizerFillElement = null
     this.velocityVisualizerValueElement = null
 
+    // Exit callbacks — called when user scrolls past the first/last item
+    this.onExitTop = null
+    this.onExitBottom = null
+
     // Input events
     this.onWheel = (event) => {
-      event.preventDefault()
       const normalizedWheelDelta = this.normalizeWheelDelta(event) * this.wheelScrollSpeed
+
+      if (this.useScrollBounds) {
+        const atFirst = this.camera.position.z >= this.maxCameraZ - 0.2
+        const atLast  = this.camera.position.z <= this.minCameraZ + 0.2
+
+        if (atFirst && normalizedWheelDelta < 0) {
+          if (this.onExitTop) this.onExitTop()
+          return
+        }
+        if (atLast && normalizedWheelDelta > 0) {
+          if (this.onExitBottom) this.onExitBottom()
+          return
+        }
+      }
+
+      event.preventDefault()
       this.addScrollInput(normalizedWheelDelta)
     }
     this.onTouchStart = (event) => {

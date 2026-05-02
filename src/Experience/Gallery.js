@@ -1,6 +1,37 @@
 import * as THREE from 'three'
 import { galleryPlaneData } from '@/data/galleryData'
 
+function createRoundedRectAlphaMap(aspectRatio) {
+  const h = 256
+  const w = Math.max(1, Math.round(h * aspectRatio))
+  const canvas = document.createElement('canvas')
+  canvas.width = w
+  canvas.height = h
+  const ctx = canvas.getContext('2d')
+  const r = Math.round(h * 0.1) // 10% of height → tasteful radius
+
+  ctx.fillStyle = '#000000'
+  ctx.fillRect(0, 0, w, h)
+  ctx.fillStyle = '#ffffff'
+  ctx.beginPath()
+  if (ctx.roundRect) {
+    ctx.roundRect(0, 0, w, h, r)
+  } else {
+    ctx.moveTo(r, 0)
+    ctx.lineTo(w - r, 0)
+    ctx.quadraticCurveTo(w, 0, w, r)
+    ctx.lineTo(w, h - r)
+    ctx.quadraticCurveTo(w, h, w - r, h)
+    ctx.lineTo(r, h)
+    ctx.quadraticCurveTo(0, h, 0, h - r)
+    ctx.lineTo(0, r)
+    ctx.quadraticCurveTo(0, 0, r, 0)
+    ctx.closePath()
+  }
+  ctx.fill()
+  return new THREE.CanvasTexture(canvas)
+}
+
 class Gallery {
   constructor(debug = null) {
     this.isInitialized = false
@@ -9,6 +40,7 @@ class Gallery {
 
     // Planes
     this.planes = []
+    this.alphaMaps = []
     this.texturesBySource = new Map()
     this.useTextures = true
     this.planeGap = 5
@@ -85,9 +117,12 @@ class Gallery {
       const blob1Color = plane.blob1Color || fallbackColor
       const blob2Color = plane.blob2Color || fallbackColor
       const labelData = this.getPlaneLabelData(plane, this.planes.length)
+      const alphaMap = createRoundedRectAlphaMap(aspectRatio)
+      this.alphaMaps.push(alphaMap)
       const planeMaterial = new THREE.MeshBasicMaterial({
         color: fallbackColor,
         map: texture,
+        alphaMap,
         side: THREE.DoubleSide,
         transparent: true,
         depthWrite: false,
@@ -513,6 +548,8 @@ class Gallery {
   dispose() {
     window.removeEventListener('pointermove', this.onPointerMove)
     window.removeEventListener('pointerleave', this.onPointerLeave)
+    this.alphaMaps.forEach((map) => map.dispose())
+    this.alphaMaps = []
   }
 }
 

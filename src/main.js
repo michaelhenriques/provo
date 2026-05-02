@@ -3,7 +3,7 @@ import { Engine } from '@/Experience/Engine';
 
 // ── Hero scroll-jacked frame animation ───────────────────────────────────────
 
-const TOTAL_FRAMES   = 300;
+const TOTAL_FRAMES    = 300;
 const TEXT_FADE_START = 0.08;
 const TEXT_FADE_END   = 0.15;
 
@@ -44,9 +44,9 @@ function preload() {
 }
 
 function onScroll() {
-  const scrollY    = window.scrollY;
-  const maxScroll  = scrollContainer.offsetHeight - window.innerHeight;
-  const progress   = Math.min(Math.max(scrollY / maxScroll, 0), 1);
+  const scrollY   = window.scrollY;
+  const maxScroll = scrollContainer.offsetHeight - window.innerHeight;
+  const progress  = Math.min(Math.max(scrollY / maxScroll, 0), 1);
 
   const frameIndex = Math.min(Math.floor(progress * (TOTAL_FRAMES - 1)), TOTAL_FRAMES - 1);
   if (frameIndex !== currentFrameIndex) {
@@ -72,38 +72,57 @@ preload();
 window.addEventListener('scroll', onScroll, { passive: true });
 onScroll();
 
-// ── Depth gallery (flavors overlay) ──────────────────────────────────────────
+// ── Depth gallery — activated by IntersectionObserver ────────────────────────
 
-const galleryOverlay = document.getElementById('gallery-overlay');
-const exploreBtn     = document.getElementById('explore-btn');
-const closeBtn       = document.getElementById('gallery-close');
+const gallerySection = document.getElementById('gallery-section');
 
-let engine = null;
+let engine       = null;
 let galleryReady = false;
+let galleryActive = false;
 
-async function openGallery() {
-  galleryOverlay.classList.add('active');
+function activateGallery() {
+  if (galleryActive) return;
+  galleryActive = true;
   document.body.style.overflow = 'hidden';
-
-  if (!galleryReady) {
-    const canvas = document.querySelector('.webgl');
-    engine = new Engine(canvas);
-    await engine.init();
-    galleryReady = true;
-  } else {
-    engine.activate();
-  }
+  engine.activate();
 }
 
-function closeGallery() {
-  galleryOverlay.classList.remove('active');
+function deactivateGallery() {
+  if (!galleryActive) return;
+  galleryActive = false;
   document.body.style.overflow = '';
-  engine?.deactivate();
+  engine.deactivate();
 }
 
-exploreBtn.addEventListener('click', openGallery);
-closeBtn.addEventListener('click', closeGallery);
+function setupExitCallbacks() {
+  // Scroll past first flavor → go back to hero
+  engine.scroll.onExitTop = () => {
+    deactivateGallery();
+    window.scrollTo({ top: gallerySection.offsetTop - window.innerHeight * 0.5, behavior: 'smooth' });
+  };
+  // Scroll past last flavor → continue to coming-soon
+  engine.scroll.onExitBottom = () => {
+    deactivateGallery();
+    window.scrollTo({ top: gallerySection.offsetTop + gallerySection.offsetHeight + 1, behavior: 'smooth' });
+  };
+}
 
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && galleryOverlay.classList.contains('active')) closeGallery();
-});
+const galleryObserver = new IntersectionObserver(async (entries) => {
+  const entry = entries[0];
+
+  if (entry.isIntersecting) {
+    if (!galleryReady) {
+      const canvas = gallerySection.querySelector('.webgl');
+      engine = new Engine(canvas);
+      await engine.init();
+      engine.deactivate(); // unbind scroll events — we control activation
+      setupExitCallbacks();
+      galleryReady = true;
+    }
+    activateGallery();
+  } else if (!entry.isIntersecting) {
+    deactivateGallery();
+  }
+}, { threshold: 0.85 });
+
+galleryObserver.observe(gallerySection);

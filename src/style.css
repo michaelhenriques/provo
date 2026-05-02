@@ -295,85 +295,12 @@ body {
   transform: translateY(-1px);
 }
 
-/* ─── Flavors intro section ──────────────────────────────────────────────── */
-#flavors-intro {
-  min-height: 100vh;
+/* ─── Gallery section (inline, directly under hero) ─────────────────────── */
+#gallery-section {
+  position: relative;
+  height: 100vh;
   background: #000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.fi-inner {
-  max-width: 640px;
-  padding: 100px 40px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 28px;
-}
-
-.fi-eyebrow {
-  display: block;
-  font-size: 10px;
-  font-weight: 400;
-  letter-spacing: 0.38em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.35);
-}
-
-.fi-headline {
-  font-family: var(--display);
-  font-size: clamp(56px, 9vw, 108px);
-  line-height: 0.92;
-  letter-spacing: 0.04em;
-  color: var(--white);
-}
-
-.fi-body {
-  font-size: 16px;
-  font-weight: 300;
-  font-style: italic;
-  line-height: 1.78;
-  color: rgba(255, 255, 255, 0.38);
-  max-width: 400px;
-}
-
-.fi-cta {
-  margin-top: 8px;
-  font-family: var(--body);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--black);
-  background: var(--white);
-  border: none;
-  padding: 18px 52px;
-  cursor: pointer;
-  transition: opacity 0.2s, transform 0.2s;
-}
-
-.fi-cta:hover {
-  opacity: 0.85;
-  transform: translateY(-1px);
-}
-
-/* ─── Gallery overlay ────────────────────────────────────────────────────── */
-#gallery-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 500;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.5s ease;
-}
-
-#gallery-overlay.active {
-  opacity: 1;
-  pointer-events: all;
+  overflow: hidden;
 }
 
 .webgl {
@@ -383,31 +310,6 @@ body {
   height: 100%;
   display: block;
   touch-action: none;
-}
-
-#gallery-close {
-  position: absolute;
-  top: 28px;
-  right: 36px;
-  z-index: 10;
-  font-family: var(--body);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--white);
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 11px 24px;
-  cursor: pointer;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  transition: border-color 0.2s, background 0.2s;
-}
-
-#gallery-close:hover {
-  border-color: rgba(255, 255, 255, 0.7);
-  background: rgba(0, 0, 0, 0.55);
 }
 
 /* ─── Gallery label overlay (from codrops) ───────────────────────────────── */
