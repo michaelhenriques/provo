@@ -294,3 +294,256 @@ body {
   opacity: 0.85;
   transform: translateY(-1px);
 }
+
+/* ─── Flavors intro section ──────────────────────────────────────────────── */
+#flavors-intro {
+  min-height: 100vh;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.fi-inner {
+  max-width: 640px;
+  padding: 100px 40px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+.fi-eyebrow {
+  display: block;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.fi-headline {
+  font-family: var(--display);
+  font-size: clamp(56px, 9vw, 108px);
+  line-height: 0.92;
+  letter-spacing: 0.04em;
+  color: var(--white);
+}
+
+.fi-body {
+  font-size: 16px;
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.78;
+  color: rgba(255, 255, 255, 0.38);
+  max-width: 400px;
+}
+
+.fi-cta {
+  margin-top: 8px;
+  font-family: var(--body);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--black);
+  background: var(--white);
+  border: none;
+  padding: 18px 52px;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.fi-cta:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+/* ─── Gallery overlay ────────────────────────────────────────────────────── */
+#gallery-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+#gallery-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.webgl {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+
+#gallery-close {
+  position: absolute;
+  top: 28px;
+  right: 36px;
+  z-index: 10;
+  font-family: var(--body);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--white);
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 11px 24px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: border-color 0.2s, background 0.2s;
+}
+
+#gallery-close:hover {
+  border-color: rgba(255, 255, 255, 0.7);
+  background: rgba(0, 0, 0, 0.55);
+}
+
+/* ─── Gallery label overlay (from codrops) ───────────────────────────────── */
+body.loading::before,
+body.loading::after {
+  content: '';
+  position: fixed;
+  z-index: 9999;
+}
+body.loading::before {
+  inset: 0;
+  background: #fff;
+}
+body.loading::after {
+  top: 50%;
+  left: 50%;
+  width: 100px;
+  height: 1px;
+  margin: 0 0 0 -50px;
+  background: #000;
+  animation: galleryLoader 1.5s ease-in-out infinite alternate;
+}
+@keyframes galleryLoader {
+  0%   { transform: scaleX(0); transform-origin: 0% 50%; }
+  50%  { transform: scaleX(1); transform-origin: 0% 50%; }
+  50.1%{ transform: scaleX(1); transform-origin: 100% 50%; }
+  100% { transform: scaleX(0); transform-origin: 100% 50%; }
+}
+
+.plane-label-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 510;
+  pointer-events: none;
+  transition: opacity 260ms ease;
+  color: rgba(244, 244, 244, 0.92);
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.plane-label-overlay__left {
+  position: absolute;
+  left: clamp(2.5rem, 8vw, 12rem);
+  top: 50%;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.plane-label-overlay__index {
+  margin: 0;
+  font-size: 9px;
+}
+
+.plane-label-overlay__chip {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+
+.plane-label-overlay__right {
+  position: absolute;
+  right: clamp(2.5rem, 7vw, 10rem);
+  top: 50%;
+}
+
+.plane-label-card {
+  width: min(28vw, 360px);
+  display: grid;
+  pointer-events: none;
+  color: inherit;
+  font-family: inherit;
+}
+
+.plane-label-card__word {
+  margin: 0 0 0.75rem;
+  font-size: clamp(9px, 0.78vw, 11px);
+  white-space: nowrap;
+}
+
+.plane-label-card__specs {
+  margin: 0;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.plane-label-card__row {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 3.5rem 1fr;
+  align-items: baseline;
+  gap: 0.8rem;
+}
+
+.plane-label-card__row dt,
+.plane-label-card__row dd {
+  margin: 0;
+}
+
+.plane-label-card__row dt {
+  font-size: 9px;
+}
+
+.plane-label-card__value {
+  font-size: clamp(9px, 0.72vw, 11px);
+}
+
+.velocity-visualizer { display: none !important; }
+
+@media (max-width: 53em) {
+  .plane-label-overlay {
+    inset: auto 0 6rem 0;
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+    align-items: start;
+    column-gap: 1.5rem;
+    padding: 0 1rem;
+  }
+  .plane-label-overlay__left {
+    position: static;
+    gap: 0.5rem;
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .plane-label-overlay__right {
+    position: static;
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .plane-label-card {
+    width: auto;
+    max-width: min(58vw, 270px);
+  }
+}
