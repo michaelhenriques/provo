@@ -14,6 +14,7 @@ const loader          = document.getElementById('loader');
 const loaderBar       = document.getElementById('loader-bar');
 const loaderPct       = document.getElementById('loader-pct');
 const nav             = document.getElementById('nav');
+const gallerySection  = document.getElementById('gallery-section');
 
 const frames = [];
 let loadedCount = 0;
@@ -66,19 +67,39 @@ function onScroll() {
   heroText.style.opacity = textOpacity;
 
   nav.classList.toggle('scrolled', scrollY > 40);
+
+  // Activate gallery only once the gallery section is fully in view
+  // (scrollY exactly at the section's top edge = hero is fully gone)
+  checkGalleryActivation(scrollY);
 }
 
 preload();
 window.addEventListener('scroll', onScroll, { passive: true });
 onScroll();
 
-// ── Depth gallery — activated by IntersectionObserver ────────────────────────
+// ── Depth gallery — precise scroll-position activation ───────────────────────
 
-const gallerySection = document.getElementById('gallery-section');
-
-let engine       = null;
-let galleryReady = false;
+let engine        = null;
+let galleryReady  = false;
 let galleryActive = false;
+
+// Lazy-init: start loading Three.js when section is close (within 300px)
+const initObserver = new IntersectionObserver(async (entries) => {
+  if (!entries[0].isIntersecting || engine) return;
+  initObserver.disconnect();
+
+  const canvas = gallerySection.querySelector('.webgl');
+  engine = new Engine(canvas);
+  await engine.init();
+  engine.deactivate();
+  setupExitCallbacks();
+  galleryReady = true;
+
+  // In case the user is already past the threshold
+  checkGalleryActivation(window.scrollY);
+}, { rootMargin: '300px 0px 0px 0px', threshold: 0 });
+
+initObserver.observe(gallerySection);
 
 function activateGallery() {
   if (galleryActive) return;
@@ -94,35 +115,23 @@ function deactivateGallery() {
   engine.deactivate();
 }
 
+function checkGalleryActivation(scrollY) {
+  if (!galleryReady || galleryActive) return;
+  // Fire only when the gallery section's top edge is at or above the viewport top
+  if (scrollY >= gallerySection.offsetTop) {
+    activateGallery();
+  }
+}
+
 function setupExitCallbacks() {
-  // Scroll past first flavor → go back to hero
   engine.scroll.onExitTop = () => {
     deactivateGallery();
-    window.scrollTo({ top: gallerySection.offsetTop - window.innerHeight * 0.5, behavior: 'smooth' });
+    // Scroll back so the hero end is visible
+    window.scrollTo({ top: gallerySection.offsetTop - 10, behavior: 'smooth' });
   };
-  // Scroll past last flavor → continue to coming-soon
   engine.scroll.onExitBottom = () => {
     deactivateGallery();
+    // Drop into the coming-soon section
     window.scrollTo({ top: gallerySection.offsetTop + gallerySection.offsetHeight + 1, behavior: 'smooth' });
   };
 }
-
-const galleryObserver = new IntersectionObserver(async (entries) => {
-  const entry = entries[0];
-
-  if (entry.isIntersecting) {
-    if (!galleryReady) {
-      const canvas = gallerySection.querySelector('.webgl');
-      engine = new Engine(canvas);
-      await engine.init();
-      engine.deactivate(); // unbind scroll events — we control activation
-      setupExitCallbacks();
-      galleryReady = true;
-    }
-    activateGallery();
-  } else if (!entry.isIntersecting) {
-    deactivateGallery();
-  }
-}, { threshold: 0.85 });
-
-galleryObserver.observe(gallerySection);

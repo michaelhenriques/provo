@@ -313,31 +313,6 @@ body {
 }
 
 /* ─── Gallery label overlay (from codrops) ───────────────────────────────── */
-body.loading::before,
-body.loading::after {
-  content: '';
-  position: fixed;
-  z-index: 9999;
-}
-body.loading::before {
-  inset: 0;
-  background: #fff;
-}
-body.loading::after {
-  top: 50%;
-  left: 50%;
-  width: 100px;
-  height: 1px;
-  margin: 0 0 0 -50px;
-  background: #000;
-  animation: galleryLoader 1.5s ease-in-out infinite alternate;
-}
-@keyframes galleryLoader {
-  0%   { transform: scaleX(0); transform-origin: 0% 50%; }
-  50%  { transform: scaleX(1); transform-origin: 0% 50%; }
-  50.1%{ transform: scaleX(1); transform-origin: 100% 50%; }
-  100% { transform: scaleX(0); transform-origin: 100% 50%; }
-}
 
 .plane-label-overlay {
   position: fixed;
