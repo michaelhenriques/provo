@@ -1,0 +1,296 @@
+/* ─── Reset ─────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ─── Tokens ─────────────────────────────────────────────────────────────── */
+:root {
+  --black:   #000000;
+  --white:   #ffffff;
+  --dim:     rgba(255, 255, 255, 0.45);
+  --display: 'Bebas Neue', sans-serif;
+  --body:    'Jost', sans-serif;
+}
+
+html { scroll-behavior: auto; }
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--body);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Loader ─────────────────────────────────────────────────────────────── */
+#loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
+}
+
+#loader.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loader-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+}
+
+.loader-logo {
+  font-family: var(--display);
+  font-size: 64px;
+  letter-spacing: 0.18em;
+  color: var(--white);
+  animation: breathe 2s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+.loader-track {
+  width: 180px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.loader-bar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0%;
+  background: var(--white);
+  transition: width 0.12s linear;
+}
+
+.loader-pct {
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 0.22em;
+  color: var(--dim);
+  text-transform: uppercase;
+}
+
+/* ─── Nav ────────────────────────────────────────────────────────────────── */
+#nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 52px;
+  transition: background 0.4s ease, backdrop-filter 0.4s ease;
+}
+
+#nav.scrolled {
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.nav-logo {
+  font-family: var(--display);
+  font-size: 26px;
+  letter-spacing: 0.14em;
+  color: var(--white);
+  user-select: none;
+}
+
+.nav-cta {
+  font-family: var(--body);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--white);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  padding: 11px 28px;
+  cursor: pointer;
+  transition: border-color 0.25s, background 0.25s;
+}
+
+.nav-cta:hover {
+  border-color: var(--white);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* ─── Scroll container ───────────────────────────────────────────────────── */
+#scroll-container {
+  height: 6000px;
+  position: relative;
+}
+
+/* ─── Hero (sticky) ──────────────────────────────────────────────────────── */
+#hero {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background: var(--black);
+}
+
+#frame-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ─── Hero text overlay ──────────────────────────────────────────────────── */
+#hero-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+  padding: 0 24px;
+  gap: 16px;
+}
+
+.hero-title {
+  font-family: var(--display);
+  font-size: clamp(96px, 17vw, 210px);
+  line-height: 0.88;
+  letter-spacing: 0.06em;
+  color: var(--white);
+  text-shadow:
+    0 0 120px rgba(0, 0, 0, 0.6),
+    0 2px 40px rgba(0, 0, 0, 0.4);
+}
+
+.hero-sub {
+  font-size: clamp(11px, 1.3vw, 15px);
+  font-weight: 300;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* Scroll hint */
+.scroll-hint {
+  position: absolute;
+  bottom: 44px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  animation: fadeInHint 1.4s 1s both;
+}
+
+@keyframes fadeInHint {
+  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.scroll-hint span {
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.scroll-line {
+  width: 1px;
+  height: 36px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.45), transparent);
+  animation: lineDrop 1.8s ease-in-out infinite;
+  transform-origin: top;
+}
+
+@keyframes lineDrop {
+  0%   { transform: scaleY(0); opacity: 0; }
+  40%  { transform: scaleY(1); opacity: 1; }
+  100% { transform: scaleY(1); opacity: 0; transform-origin: bottom; }
+}
+
+/* ─── Coming soon ────────────────────────────────────────────────────────── */
+#coming-soon {
+  min-height: 100vh;
+  background: #040404;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.cs-inner {
+  max-width: 640px;
+  padding: 100px 40px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.cs-eyebrow {
+  display: block;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.cs-headline {
+  font-family: var(--display);
+  font-size: clamp(56px, 9vw, 108px);
+  line-height: 0.92;
+  letter-spacing: 0.04em;
+  color: var(--white);
+}
+
+.cs-body {
+  font-size: 16px;
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.78;
+  color: rgba(255, 255, 255, 0.38);
+  max-width: 400px;
+}
+
+.cs-cta {
+  margin-top: 8px;
+  font-family: var(--body);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--black);
+  background: var(--white);
+  border: none;
+  padding: 18px 52px;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.cs-cta:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
