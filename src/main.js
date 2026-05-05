@@ -90,10 +90,11 @@ onScroll(0);
 
 // ── Depth gallery — precise scroll-position activation ───────────────────────
 
-let engine         = null;
-let galleryReady   = false;
-let galleryActive  = false;
-let galleryExiting = false;
+let engine            = null;
+let galleryReady      = false;
+let galleryActive     = false;
+let galleryExiting    = false; // set on bottom-exit to prevent re-activation mid-scroll
+let galleryExitingTop = false; // set on top-exit to prevent re-activation mid-scroll
 
 const labelOverlay = document.querySelector('.plane-label-overlay');
 
@@ -115,11 +116,13 @@ initObserver.observe(gallerySection);
 
 function activateGallery() {
   if (galleryActive) return;
-  galleryActive = true;
+  galleryActive     = true;
+  galleryExiting    = false;
+  galleryExitingTop = false;
   lenis.stop();
-  document.body.style.overflow = 'hidden'; // also hides scrollbar so drag can't desync Lenis
+  document.body.style.overflow = 'hidden';
   engine.activate();
-  if (labelOverlay) labelOverlay.style.display = '';
+  if (labelOverlay) labelOverlay.style.visibility = 'visible';
 }
 
 function deactivateGallery() {
@@ -128,7 +131,7 @@ function deactivateGallery() {
   document.body.style.overflow = '';
   lenis.start();
   engine.deactivate();
-  if (labelOverlay) labelOverlay.style.display = 'none';
+  if (labelOverlay) labelOverlay.style.visibility = 'hidden';
 }
 
 function checkGalleryActivation(scrollY) {
@@ -136,9 +139,15 @@ function checkGalleryActivation(scrollY) {
 
   const galleryBottom = gallerySection.offsetTop + gallerySection.offsetHeight;
 
-  // While animating out of the bottom, wait until we clear the section
+  // Block re-activation while animating out of gallery from bottom
   if (galleryExiting) {
     if (scrollY > galleryBottom) galleryExiting = false;
+    return;
+  }
+
+  // Block re-activation while animating out of gallery from top
+  if (galleryExitingTop) {
+    if (scrollY < gallerySection.offsetTop) galleryExitingTop = false;
     return;
   }
 
@@ -149,8 +158,8 @@ function checkGalleryActivation(scrollY) {
 
 function setupExitCallbacks() {
   engine.scroll.onExitTop = () => {
+    galleryExitingTop = true;
     deactivateGallery();
-    // rAF ensures Lenis has processed one tick after start() before scrollTo
     requestAnimationFrame(() => {
       lenis.scrollTo(gallerySection.offsetTop - 10, { duration: 0.8 });
     });

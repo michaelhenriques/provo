@@ -250,7 +250,7 @@ body {
 /* ─── Gallery label overlay (from codrops) ───────────────────────────────── */
 
 .plane-label-overlay {
-  display: none; /* shown via JS only while gallery is active */
+  visibility: hidden; /* shown via JS only while gallery is active */
   position: fixed;
   inset: 0;
   z-index: 510;
