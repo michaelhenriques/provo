@@ -1,5 +1,10 @@
 import './style.css';
 import { Engine } from '@/Experience/Engine';
+import Lenis from 'lenis';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 // ── Hero scroll-jacked frame animation ───────────────────────────────────────
 
@@ -44,8 +49,7 @@ function preload() {
   }
 }
 
-function onScroll() {
-  const scrollY   = window.scrollY;
+function onScroll(scrollY = window.scrollY) {
   const maxScroll = scrollContainer.offsetHeight - window.innerHeight;
   const progress  = Math.min(Math.max(scrollY / maxScroll, 0), 1);
 
@@ -73,9 +77,32 @@ function onScroll() {
   checkGalleryActivation(scrollY);
 }
 
+// ── Lenis smooth scroll ────────────────────────────────────────────────────────
+const lenis = new Lenis({ lerp: 0.08, syncTouch: true });
+
+lenis.on('scroll', ({ scroll }) => {
+  onScroll(scroll);
+});
+
+function rafLoop(time) {
+  lenis.raf(time);
+  requestAnimationFrame(rafLoop);
+}
+requestAnimationFrame(rafLoop);
+
+ScrollTrigger.scrollerProxy(document.documentElement, {
+  scrollTop(value) {
+    if (arguments.length) lenis.scrollTo(value, { immediate: true });
+    return lenis.scroll;
+  },
+  getBoundingClientRect() {
+    return { top: 0, left: 0, width: window.innerWidth, height: window.innerHeight };
+  },
+});
+lenis.on('scroll', ScrollTrigger.update);
+
 preload();
-window.addEventListener('scroll', onScroll, { passive: true });
-onScroll();
+onScroll(0);
 
 // ── Depth gallery — precise scroll-position activation ───────────────────────
 
@@ -104,14 +131,14 @@ initObserver.observe(gallerySection);
 function activateGallery() {
   if (galleryActive) return;
   galleryActive = true;
-  document.body.style.overflow = 'hidden';
+  lenis.stop();
   engine.activate();
 }
 
 function deactivateGallery() {
   if (!galleryActive) return;
   galleryActive = false;
-  document.body.style.overflow = '';
+  lenis.start();
   engine.deactivate();
 }
 
@@ -126,12 +153,54 @@ function checkGalleryActivation(scrollY) {
 function setupExitCallbacks() {
   engine.scroll.onExitTop = () => {
     deactivateGallery();
-    // Scroll back so the hero end is visible
-    window.scrollTo({ top: gallerySection.offsetTop - 10, behavior: 'smooth' });
+    lenis.scrollTo(gallerySection.offsetTop - 10, { duration: 0.8 });
   };
   engine.scroll.onExitBottom = () => {
     deactivateGallery();
-    // Drop into the coming-soon section
-    window.scrollTo({ top: gallerySection.offsetTop + gallerySection.offsetHeight + 1, behavior: 'smooth' });
+    lenis.scrollTo(gallerySection.offsetTop + gallerySection.offsetHeight + 10, { duration: 0.8 });
   };
+}
+
+// ── Arch section — GSAP + ScrollTrigger ──────────────────────────────────────
+
+const bgColors = ['#0a0a0a', '#0d1a0f', '#0a0c1a'];
+
+const archImages = document.querySelectorAll('.arch__img');
+const archSection = document.getElementById('arch-section');
+
+if (archImages.length && archSection) {
+  // Pin the right column
+  ScrollTrigger.create({
+    trigger: '.arch__right',
+    start: 'top top',
+    end: () => `+=${archSection.offsetHeight - window.innerHeight}`,
+    pin: true,
+    pinSpacing: false,
+    scroller: document.documentElement,
+  });
+
+  // Wipe images in as each text block scrolls into view
+  archImages.forEach((img, i) => {
+    if (i === 0) return; // first image visible by default
+
+    gsap.set(img, { clipPath: 'inset(100% 0% 0% 0%)' });
+
+    ScrollTrigger.create({
+      trigger: `.arch__block:nth-child(${i + 1})`,
+      start: 'top 60%',
+      end: 'top 20%',
+      scroller: document.documentElement,
+      onEnter: () => gsap.to(img, { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.9, ease: 'power3.inOut' }),
+      onLeaveBack: () => gsap.to(img, { clipPath: 'inset(100% 0% 0% 0%)', duration: 0.7, ease: 'power3.inOut' }),
+    });
+
+    // Background tint shift
+    ScrollTrigger.create({
+      trigger: `.arch__block:nth-child(${i + 1})`,
+      start: 'top 55%',
+      scroller: document.documentElement,
+      onEnter: () => gsap.to(archSection, { backgroundColor: bgColors[i], duration: 1, ease: 'power2.inOut' }),
+      onLeaveBack: () => gsap.to(archSection, { backgroundColor: bgColors[i - 1], duration: 1, ease: 'power2.inOut' }),
+    });
+  });
 }

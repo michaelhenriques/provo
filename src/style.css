@@ -333,6 +333,91 @@ body {
 
 .velocity-visualizer { display: none !important; }
 
+/* ─── Arch section ───────────────────────────────────────────────────────────── */
+#arch-section {
+  background: #0a0a0a;
+  transition: background-color 1s ease;
+}
+
+.arch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.arch__left {
+  padding: 15vh 8vw 15vh 6vw;
+  display: flex;
+  flex-direction: column;
+  gap: 40vh;
+}
+
+.arch__block {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.arch__label {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.38);
+}
+
+.arch__heading {
+  font-family: var(--display);
+  font-size: clamp(32px, 3.8vw, 56px);
+  line-height: 1.05;
+  letter-spacing: 0.04em;
+  color: var(--white);
+  margin: 0;
+}
+
+.arch__body {
+  font-size: clamp(14px, 1.1vw, 17px);
+  font-weight: 300;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.6);
+  max-width: 44ch;
+}
+
+.arch__right {
+  position: relative;
+  height: 100vh;
+}
+
+.arch__img-stack {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.arch__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .arch {
+    grid-template-columns: 1fr;
+  }
+  .arch__right {
+    display: none;
+  }
+  .arch__left {
+    padding: 12vh 6vw;
+    gap: 20vh;
+  }
+}
+
 @media (max-width: 53em) {
   .plane-label-overlay {
     inset: auto 0 6rem 0;
