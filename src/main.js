@@ -109,6 +109,7 @@ onScroll(0);
 let engine        = null;
 let galleryReady  = false;
 let galleryActive = false;
+let galleryExiting = false; // prevents re-activation during bottom-exit scroll animation
 
 // Lazy-init: start loading Three.js when section is close (within 300px)
 const initObserver = new IntersectionObserver(async (entries) => {
@@ -144,8 +145,16 @@ function deactivateGallery() {
 
 function checkGalleryActivation(scrollY) {
   if (!galleryReady || galleryActive) return;
-  // Fire only when the gallery section's top edge is at or above the viewport top
-  if (scrollY >= gallerySection.offsetTop) {
+
+  const galleryBottom = gallerySection.offsetTop + gallerySection.offsetHeight;
+
+  // While animating past the bottom, wait until we clear the section
+  if (galleryExiting) {
+    if (scrollY > galleryBottom) galleryExiting = false;
+    return;
+  }
+
+  if (scrollY >= gallerySection.offsetTop && scrollY < galleryBottom) {
     activateGallery();
   }
 }
@@ -156,6 +165,7 @@ function setupExitCallbacks() {
     lenis.scrollTo(gallerySection.offsetTop - 10, { duration: 0.8 });
   };
   engine.scroll.onExitBottom = () => {
+    galleryExiting = true;
     deactivateGallery();
     lenis.scrollTo(gallerySection.offsetTop + gallerySection.offsetHeight + 10, { duration: 0.8 });
   };

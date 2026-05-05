@@ -342,21 +342,19 @@ body {
 .arch {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  min-height: 100vh;
-  max-width: 1400px;
-  margin: 0 auto;
 }
 
 .arch__left {
-  padding: 15vh 8vw 15vh 6vw;
   display: flex;
   flex-direction: column;
-  gap: 40vh;
 }
 
 .arch__block {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  padding: 0 8vw 0 6vw;
   gap: 20px;
 }
 
@@ -412,9 +410,8 @@ body {
   .arch__right {
     display: none;
   }
-  .arch__left {
-    padding: 12vh 6vw;
-    gap: 20vh;
+  .arch__block {
+    padding: 0 6vw;
   }
 }
 
