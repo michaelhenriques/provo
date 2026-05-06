@@ -29,21 +29,34 @@ gsap.ticker.add((time) => { lenis.raf(time * 1000); });
 gsap.ticker.lagSmoothing(0);
 
 // ── Hero zoom (GSAP ScrollTrigger pin) ────────────────────────────────────────
-gsap.timeline({
-  scrollTrigger: {
-    trigger: '.hero-wrapper',
-    start: 'top top',
-    end: '+=150%',
-    pin: true,
-    scrub: true,
-  },
-})
-  .to('.section.hero', {
-    scale: 1.1,
-    transformOrigin: 'center center',
-    ease: 'power1.inOut',
-  })
-  .to('#hero-text', { opacity: 0, duration: 0.25, ease: 'power1.in' }, '<');
+window.addEventListener('load', () => {
+  gsap
+    .timeline({
+      scrollTrigger: {
+        trigger: '.wrapper',
+        start: 'top top',
+        end: '+=150%',
+        pin: true,
+        scrub: true,
+        markers: true,
+      },
+    })
+    .to('img', {
+      scale: 2,
+      z: 350,
+      transformOrigin: 'center center',
+      ease: 'power1.inOut',
+    })
+    .to(
+      '.section.hero',
+      {
+        scale: 1.1,
+        transformOrigin: 'center center',
+        ease: 'power1.inOut',
+      },
+      '<',
+    );
+});
 
 // ── Depth gallery — precise scroll-position activation ───────────────────────
 let engine            = null;

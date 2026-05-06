@@ -132,7 +132,7 @@ body {
 }
 
 /* ─── Hero wrapper (GSAP pinned zoom) ────────────────────────────────────── */
-.hero-wrapper {
+.wrapper {
   height: 100vh;
   overflow: hidden;
   perspective: 1000px;
@@ -153,38 +153,6 @@ body {
   height: 100%;
   object-fit: cover;
   display: block;
-}
-
-/* ─── Hero text overlay ──────────────────────────────────────────────────── */
-#hero-text {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  pointer-events: none;
-  padding: 0 24px;
-}
-
-.hero-title {
-  font-family: var(--display);
-  font-size: clamp(96px, 17vw, 210px);
-  line-height: 0.88;
-  letter-spacing: 0.06em;
-  color: var(--white);
-  text-shadow:
-    0 0 120px rgba(0, 0, 0, 0.6),
-    0 2px 40px rgba(0, 0, 0, 0.4);
-}
-
-.hero-sub {
-  font-size: clamp(11px, 1.3vw, 15px);
-  font-weight: 300;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.72);
 }
 
 
