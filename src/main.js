@@ -38,17 +38,11 @@ gsap.timeline({
     scrub: true,
   },
 })
-  .to('.hero-wrapper img', {
-    scale: 2,
-    z: 350,
-    transformOrigin: 'center center',
-    ease: 'power1.inOut',
-  })
   .to('.section.hero', {
     scale: 1.1,
     transformOrigin: 'center center',
     ease: 'power1.inOut',
-  }, '<')
+  })
   .to('#hero-text', { opacity: 0, duration: 0.25, ease: 'power1.in' }, '<');
 
 // ── Depth gallery — precise scroll-position activation ───────────────────────
