@@ -197,7 +197,8 @@ if (teleSection) {
       pinSpacing: false,
       onUpdate: (self) => {
         const eased = gsap.parseEase('power1.inOut')(self.progress);
-        teleSection.style.setProperty('--progress', eased);
+        // --progress maps 0.22 → 1.05 so the image is always visible at start
+        teleSection.style.setProperty('--progress', 0.22 + eased * 0.83);
       },
     },
   });

@@ -425,13 +425,14 @@ body {
   justify-content: center;
   overflow: hidden;
   background: #000;
-  --progress: 0;
+  --progress: 0.22; /* non-zero so image is visible before any scroll */
 }
 
 .tele__media {
   position: absolute;
   inset: 0;
   transform: scale(var(--progress));
+  transform-origin: center center;
 }
 
 .tele__media__back,
