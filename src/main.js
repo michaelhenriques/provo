@@ -191,10 +191,9 @@ if (teleSection) {
     scrollTrigger: {
       trigger: teleSection,
       start: 'top top',
-      end: 'bottom top',
-      scrub: true,
+      end: '+=250%',
+      scrub: 1.5,
       pin: true,
-      pinSpacing: false,
       onUpdate: (self) => {
         const eased = gsap.parseEase('power1.inOut')(self.progress);
         // --progress maps 0.22 → 1.05 so the image is always visible at start
