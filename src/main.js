@@ -223,6 +223,8 @@ if (teleSection) {
     delay: 0.4,
     stagger: { amount: 0.2, from: 'end' },
   }, 0.6);
+
+  teleTl.to('.tele__reveal', { opacity: 1, duration: 0.4, ease: 'power2.inOut' }, '>-0.1');
 }
 
 // ── Arch section — GSAP + ScrollTrigger ──────────────────────────────────────

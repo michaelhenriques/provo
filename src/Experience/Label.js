@@ -22,26 +22,9 @@ class Label {
         <p class="plane-label-card__word"></p>
         <span class="plane-label-overlay__chip"></span>
       </div>
-      <article class="plane-label-card plane-label-overlay__right">
-        <dl class="plane-label-card__specs">
-          <div class="plane-label-card__row">
-            <dt>CMYK</dt>
-            <dd class="plane-label-card__value plane-label-card__value--cmyk"></dd>
-          </div>
-          <div class="plane-label-card__row">
-            <dt>RGB</dt>
-            <dd class="plane-label-card__value plane-label-card__value--rgb"></dd>
-          </div>
-          <div class="plane-label-card__row">
-            <dt>HEX</dt>
-            <dd class="plane-label-card__value plane-label-card__value--hex"></dd>
-          </div>
-          <div class="plane-label-card__row">
-            <dt>PMS</dt>
-            <dd class="plane-label-card__value plane-label-card__value--pms"></dd>
-          </div>
-        </dl>
-      </article>
+      <div class="plane-label-overlay__right">
+        <button class="plane-label-buynow">Buy Now</button>
+      </div>
     `
 
     return {
@@ -49,10 +32,10 @@ class Label {
       leftIndexElement: element.querySelector('.plane-label-overlay__index'),
       wordElement: element.querySelector('.plane-label-card__word'),
       chipElement: element.querySelector('.plane-label-overlay__chip'),
-      cmykValueElement: element.querySelector('.plane-label-card__value--cmyk'),
-      rgbValueElement: element.querySelector('.plane-label-card__value--rgb'),
-      hexValueElement: element.querySelector('.plane-label-card__value--hex'),
-      pmsValueElement: element.querySelector('.plane-label-card__value--pms'),
+      cmykValueElement: null,
+      rgbValueElement: null,
+      hexValueElement: null,
+      pmsValueElement: null,
     }
   }
 
@@ -170,10 +153,6 @@ class Label {
     this.leftIndexElement.textContent = String(planeIndex + 1).padStart(2, '0')
     this.wordElement.textContent = labelData.word || 'tone'
     this.chipElement.style.backgroundColor = colorSpecs.chipHex
-    this.cmykValueElement.textContent = colorSpecs.cmyk
-    this.rgbValueElement.textContent = colorSpecs.rgb
-    this.hexValueElement.textContent = colorSpecs.hex
-    this.pmsValueElement.textContent = colorSpecs.pms
     this.overlayElement.style.color = labelData.color || ''
 
     this.activePlaneIndex = planeIndex

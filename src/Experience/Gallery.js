@@ -44,7 +44,7 @@ class Gallery {
     this.texturesBySource = new Map()
     this.useTextures = true
     this.planeGap = 5
-    this.desktopPlaneScale = 1
+    this.desktopPlaneScale = 0.68
     this.mobilePlaneScale = 0.65
     this.mobileXSpreadFactor = 0.25
     this.mobileBreakpoint = 768
