@@ -6,21 +6,78 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// ── Hero frame animation ──────────────────────────────────────────────────────
+const TOTAL_FRAMES    = 300;
+const TEXT_FADE_START = 0.08;
+const TEXT_FADE_END   = 0.15;
+
+const frameImg        = document.getElementById('frame-img');
+const heroText        = document.getElementById('hero-text');
+const scrollContainer = document.getElementById('scroll-container');
+
+const frames = [];
+let loadedCount       = 0;
+let loaderDismissed   = false;
+let currentFrameIndex = -1;
+
+function frameUrl(i) {
+  return `/frames/ezgif-frame-${String(i + 1).padStart(3, '0')}.jpg`;
+}
+
+(function preload() {
+  for (let i = 0; i < TOTAL_FRAMES; i++) {
+    const img = new Image();
+    img.onload = () => {
+      loadedCount++;
+      const pct = Math.round((loadedCount / TOTAL_FRAMES) * 100);
+      if (loaderBar) loaderBar.style.width = pct + '%';
+      if (loaderPct) loaderPct.textContent = pct + '%';
+      if (loadedCount >= 20 && !loaderDismissed) {
+        loaderDismissed = true;
+        if (loader) loader.classList.add('hidden');
+      }
+    };
+    img.src = frameUrl(i);
+    frames.push(img);
+  }
+})();
+
+function updateHeroFrame(scrollY) {
+  if (!scrollContainer || !frameImg) return;
+  const maxScroll = scrollContainer.offsetHeight - window.innerHeight;
+  const progress  = Math.min(Math.max(scrollY / maxScroll, 0), 1);
+  const idx       = Math.min(Math.floor(progress * (TOTAL_FRAMES - 1)), TOTAL_FRAMES - 1);
+
+  if (idx !== currentFrameIndex) {
+    currentFrameIndex = idx;
+    const cached = frames[idx];
+    frameImg.src = (cached && cached.complete) ? cached.src : frameUrl(idx);
+  }
+
+  if (heroText) {
+    let opacity = 1;
+    if (progress > TEXT_FADE_START) {
+      opacity = progress >= TEXT_FADE_END
+        ? 0
+        : 1 - (progress - TEXT_FADE_START) / (TEXT_FADE_END - TEXT_FADE_START);
+    }
+    heroText.style.opacity = opacity;
+  }
+}
+
 // ── DOM refs ──────────────────────────────────────────────────────────────────
 const nav            = document.getElementById('nav');
 const gallerySection = document.getElementById('gallery-section');
 const loader         = document.getElementById('loader');
-
-// ── Loader — hide once page assets are ready ──────────────────────────────────
-if (loader) {
-  window.addEventListener('load', () => loader.classList.add('hidden'));
-}
+const loaderBar      = document.getElementById('loader-bar');
+const loaderPct      = document.getElementById('loader-pct');
 
 // ── Lenis smooth scroll ────────────────────────────────────────────────────────
 const lenis = new Lenis({ lerp: 0.08, syncTouch: true });
 
 lenis.on('scroll', ({ scroll }) => {
   nav.classList.toggle('scrolled', scroll > 40);
+  updateHeroFrame(scroll);
   checkGalleryActivation(scroll);
 });
 lenis.on('scroll', ScrollTrigger.update);
@@ -28,35 +85,7 @@ lenis.on('scroll', ScrollTrigger.update);
 gsap.ticker.add((time) => { lenis.raf(time * 1000); });
 gsap.ticker.lagSmoothing(0);
 
-// ── Hero zoom (GSAP ScrollTrigger pin) ────────────────────────────────────────
-window.addEventListener('load', () => {
-  gsap
-    .timeline({
-      scrollTrigger: {
-        trigger: '.wrapper',
-        start: 'top top',
-        end: '+=150%',
-        pin: true,
-        scrub: true,
-        markers: true,
-      },
-    })
-    .to('img', {
-      scale: 2,
-      z: 350,
-      transformOrigin: 'center center',
-      ease: 'power1.inOut',
-    })
-    .to(
-      '.section.hero',
-      {
-        scale: 1.1,
-        transformOrigin: 'center center',
-        ease: 'power1.inOut',
-      },
-      '<',
-    );
-});
+updateHeroFrame(window.scrollY);
 
 // ── Depth gallery — precise scroll-position activation ───────────────────────
 let engine            = null;
