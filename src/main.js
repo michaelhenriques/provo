@@ -173,6 +173,58 @@ function setupExitCallbacks() {
   };
 }
 
+// ── Telescope zoom section ────────────────────────────────────────────────────
+
+const teleSection  = document.getElementById('tele-section');
+
+if (teleSection) {
+  const teleFronts = teleSection.querySelectorAll('.tele__front');
+  const teleSmall  = teleSection.querySelectorAll('.tele__images img');
+
+  gsap.set(teleSmall, {
+    transformStyle: 'preserve-3d',
+    backfaceVisibility: 'hidden',
+    force3D: true,
+  });
+
+  const teleTl = gsap.timeline({
+    scrollTrigger: {
+      trigger: teleSection,
+      start: 'top top',
+      end: 'bottom top',
+      scrub: true,
+      pin: true,
+      pinSpacing: false,
+      onUpdate: (self) => {
+        const eased = gsap.parseEase('power1.inOut')(self.progress);
+        teleSection.style.setProperty('--progress', eased);
+      },
+    },
+  });
+
+  teleTl.to(teleSmall, {
+    z: '100vh',
+    duration: 1,
+    ease: 'power1.inOut',
+    stagger: { amount: 0.2, from: 'center' },
+  });
+
+  teleTl.to(teleFronts, {
+    scale: 1,
+    duration: 1,
+    ease: 'power1.inOut',
+    delay: 0.1,
+  }, 0.6);
+
+  teleTl.to(teleFronts, {
+    filter: 'blur(0px)',
+    duration: 1,
+    ease: 'power1.inOut',
+    delay: 0.4,
+    stagger: { amount: 0.2, from: 'end' },
+  }, 0.6);
+}
+
 // ── Arch section — GSAP + ScrollTrigger ──────────────────────────────────────
 
 const bgColors    = ['#0a0a0a', '#0d1a0f', '#0a0c1a'];

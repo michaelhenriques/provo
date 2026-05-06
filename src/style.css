@@ -416,6 +416,100 @@ body {
   }
 }
 
+/* ─── Telescope section ──────────────────────────────────────────────────────── */
+#tele-section {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #000;
+  --progress: 0;
+}
+
+.tele__media {
+  position: absolute;
+  inset: 0;
+  transform: scale(var(--progress));
+}
+
+.tele__media__back,
+.tele__front {
+  position: absolute;
+  inset: 0;
+}
+
+.tele__media__back img,
+.tele__front img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tele__front { filter: blur(2px); }
+
+.front-1 { transform: scale(1); }
+.front-2 { transform: scale(0.85); }
+.front-3 { transform: scale(0.6); }
+.front-4 { transform: scale(0.45); }
+.front-5 { transform: scale(0.3); }
+.front-6 { transform: scale(0.15); }
+
+.tele__images {
+  position: absolute;
+  inset: 0;
+  perspective: 100vh;
+  z-index: 2;
+}
+
+.tele__images img {
+  position: absolute;
+  width: 10vw;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+}
+
+.tele__images img:nth-child(1)  { top: 15%;    left: -1vw; }
+.tele__images img:nth-child(2)  { top: 5%;     left: 20vw; }
+.tele__images img:nth-child(3)  { top: 8%;     left: 27vw; }
+.tele__images img:nth-child(4)  { top: 18%;    right: 18vw; }
+.tele__images img:nth-child(5)  { top: 5%;     right: 10vw; }
+.tele__images img:nth-child(6)  { bottom: 5%;  left: 10vw; }
+.tele__images img:nth-child(7)  { bottom: 8%;  left: 23vw; }
+.tele__images img:nth-child(8)  { bottom: 3%;  left: 46vw; }
+.tele__images img:nth-child(9)  { bottom: 5%;  right: 15vw; }
+.tele__images img:nth-child(10) { bottom: 9%;  right: 7vw; }
+
+.tele__heading {
+  font-family: var(--display);
+  font-size: clamp(48px, 8vw, 120px);
+  letter-spacing: 0.1em;
+  color: var(--white);
+  display: flex;
+  gap: 0.4em;
+  position: relative;
+  z-index: 10;
+  pointer-events: none;
+  mix-blend-mode: difference;
+}
+
+.tele__left {
+  display: inline-block;
+  transform: translate3d(calc(var(--progress) * (-66vw + 100%) - 0.3em), 0, 0);
+}
+
+.tele__right {
+  display: inline-block;
+  transform: translate3d(calc(var(--progress) * (66vw - 100%)), 0, 0);
+}
+
+@media (max-width: 768px) {
+  .tele__heading { font-size: clamp(32px, 10vw, 64px); }
+  .tele__images img { width: 18vw; }
+}
+
 @media (max-width: 53em) {
   .plane-label-overlay {
     inset: auto 0 6rem 0;
