@@ -6,97 +6,58 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// ── Hero scroll-jacked frame animation ───────────────────────────────────────
+// ── DOM refs ──────────────────────────────────────────────────────────────────
+const nav            = document.getElementById('nav');
+const gallerySection = document.getElementById('gallery-section');
+const loader         = document.getElementById('loader');
 
-const TOTAL_FRAMES    = 300;
-const TEXT_FADE_START = 0.08;
-const TEXT_FADE_END   = 0.15;
-
-const frameImg        = document.getElementById('frame-img');
-const heroText        = document.getElementById('hero-text');
-const scrollContainer = document.getElementById('scroll-container');
-const loader          = document.getElementById('loader');
-const loaderBar       = document.getElementById('loader-bar');
-const loaderPct       = document.getElementById('loader-pct');
-const nav             = document.getElementById('nav');
-const gallerySection  = document.getElementById('gallery-section');
-
-const frames = [];
-let loadedCount = 0;
-let loaderDismissed = false;
-let currentFrameIndex = -1;
-
-function frameUrl(i) {
-  const n = String(i + 1).padStart(3, '0');
-  return `/frames/ezgif-frame-${n}.jpg`;
-}
-
-function preload() {
-  for (let i = 0; i < TOTAL_FRAMES; i++) {
-    const img = new Image();
-    img.onload = () => {
-      loadedCount++;
-      const pct = Math.round((loadedCount / TOTAL_FRAMES) * 100);
-      loaderBar.style.width = pct + '%';
-      loaderPct.textContent = pct + '%';
-      if (loadedCount >= 20 && !loaderDismissed) {
-        loaderDismissed = true;
-        loader.classList.add('hidden');
-      }
-    };
-    img.src = frameUrl(i);
-    frames.push(img);
-  }
-}
-
-function onScroll(scrollY = window.scrollY) {
-  const maxScroll = scrollContainer.offsetHeight - window.innerHeight;
-  const progress  = Math.min(Math.max(scrollY / maxScroll, 0), 1);
-
-  const frameIndex = Math.min(Math.floor(progress * (TOTAL_FRAMES - 1)), TOTAL_FRAMES - 1);
-  if (frameIndex !== currentFrameIndex) {
-    currentFrameIndex = frameIndex;
-    const cached = frames[frameIndex];
-    frameImg.src = (cached && cached.complete) ? cached.src : frameUrl(frameIndex);
-  }
-
-  let textOpacity;
-  if (progress <= TEXT_FADE_START) {
-    textOpacity = 1;
-  } else if (progress >= TEXT_FADE_END) {
-    textOpacity = 0;
-  } else {
-    textOpacity = 1 - ((progress - TEXT_FADE_START) / (TEXT_FADE_END - TEXT_FADE_START));
-  }
-  heroText.style.opacity = textOpacity;
-
-  nav.classList.toggle('scrolled', scrollY > 40);
-
-  checkGalleryActivation(scrollY);
+// ── Loader — hide once page assets are ready ──────────────────────────────────
+if (loader) {
+  window.addEventListener('load', () => loader.classList.add('hidden'));
 }
 
 // ── Lenis smooth scroll ────────────────────────────────────────────────────────
 const lenis = new Lenis({ lerp: 0.08, syncTouch: true });
 
-lenis.on('scroll', ({ scroll }) => { onScroll(scroll); });
+lenis.on('scroll', ({ scroll }) => {
+  nav.classList.toggle('scrolled', scroll > 40);
+  checkGalleryActivation(scroll);
+});
 lenis.on('scroll', ScrollTrigger.update);
 
-// Use gsap.ticker so Lenis and ScrollTrigger are always in sync
 gsap.ticker.add((time) => { lenis.raf(time * 1000); });
 gsap.ticker.lagSmoothing(0);
 
-preload();
-onScroll(0);
+// ── Hero zoom (GSAP ScrollTrigger pin) ────────────────────────────────────────
+gsap.timeline({
+  scrollTrigger: {
+    trigger: '.hero-wrapper',
+    start: 'top top',
+    end: '+=150%',
+    pin: true,
+    scrub: true,
+  },
+})
+  .to('.hero-wrapper img', {
+    scale: 2,
+    z: 350,
+    transformOrigin: 'center center',
+    ease: 'power1.inOut',
+  })
+  .to('.section.hero', {
+    scale: 1.1,
+    transformOrigin: 'center center',
+    ease: 'power1.inOut',
+  }, '<')
+  .to('#hero-text', { opacity: 0, duration: 0.25, ease: 'power1.in' }, '<');
 
 // ── Depth gallery — precise scroll-position activation ───────────────────────
-
 let engine            = null;
 let galleryReady      = false;
 let galleryActive     = false;
-let galleryExiting    = false; // set on bottom-exit to prevent re-activation mid-scroll
-let galleryExitingTop = false; // set on top-exit to prevent re-activation mid-scroll
-
-let labelOverlay = null; // assigned after engine.init() creates the element
+let galleryExiting    = false;
+let galleryExitingTop = false;
+let labelOverlay      = null;
 
 const initObserver = new IntersectionObserver(async (entries) => {
   if (!entries[0].isIntersecting || engine) return;
@@ -105,7 +66,7 @@ const initObserver = new IntersectionObserver(async (entries) => {
   const canvas = gallerySection.querySelector('.webgl');
   engine = new Engine(canvas);
   await engine.init();
-  labelOverlay = document.querySelector('.plane-label-overlay'); // now it exists
+  labelOverlay = document.querySelector('.plane-label-overlay');
   engine.deactivate();
   setupExitCallbacks();
   galleryReady = true;
@@ -140,13 +101,11 @@ function checkGalleryActivation(scrollY) {
 
   const galleryBottom = gallerySection.offsetTop + gallerySection.offsetHeight;
 
-  // Block re-activation while animating out of gallery from bottom
   if (galleryExiting) {
     if (scrollY > galleryBottom) galleryExiting = false;
     return;
   }
 
-  // Block re-activation while animating out of gallery from top
   if (galleryExitingTop) {
     if (scrollY < gallerySection.offsetTop) galleryExitingTop = false;
     return;
@@ -175,8 +134,7 @@ function setupExitCallbacks() {
 }
 
 // ── Telescope zoom section ────────────────────────────────────────────────────
-
-const teleSection  = document.getElementById('tele-section');
+const teleSection = document.getElementById('tele-section');
 
 if (teleSection) {
   const teleFronts = teleSection.querySelectorAll('.tele__front');
@@ -197,7 +155,6 @@ if (teleSection) {
       pin: true,
       onUpdate: (self) => {
         const eased = gsap.parseEase('power1.inOut')(self.progress);
-        // --progress maps 0.22 → 1.05 so the image is always visible at start
         teleSection.style.setProperty('--progress', 0.22 + eased * 0.83);
       },
     },
@@ -229,7 +186,6 @@ if (teleSection) {
 }
 
 // ── Arch section — GSAP + ScrollTrigger ──────────────────────────────────────
-
 const bgColors    = ['#0a0a0a', '#0d1a0f', '#0a0c1a'];
 const archImages  = document.querySelectorAll('.arch__img');
 const archSection = document.getElementById('arch-section');
@@ -251,8 +207,8 @@ if (archImages.length && archSection) {
     ScrollTrigger.create({
       trigger: `.arch__block:nth-child(${i + 1})`,
       start: 'top 60%',
-      onEnter:     () => gsap.to(img, { clipPath: 'inset(0% 0% 0% 0%)',     duration: 0.9, ease: 'power3.inOut' }),
-      onLeaveBack: () => gsap.to(img, { clipPath: 'inset(100% 0% 0% 0%)',   duration: 0.7, ease: 'power3.inOut' }),
+      onEnter:     () => gsap.to(img, { clipPath: 'inset(0% 0% 0% 0%)',   duration: 0.9, ease: 'power3.inOut' }),
+      onLeaveBack: () => gsap.to(img, { clipPath: 'inset(100% 0% 0% 0%)', duration: 0.7, ease: 'power3.inOut' }),
     });
 
     ScrollTrigger.create({

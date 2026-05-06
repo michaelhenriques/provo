@@ -131,23 +131,22 @@ body {
   background: rgba(255, 255, 255, 0.07);
 }
 
-/* ─── Scroll container ───────────────────────────────────────────────────── */
-#scroll-container {
-  height: 6000px;
-  position: relative;
+/* ─── Hero wrapper (GSAP pinned zoom) ────────────────────────────────────── */
+.hero-wrapper {
+  height: 100vh;
+  overflow: hidden;
+  perspective: 1000px;
 }
 
-/* ─── Hero (sticky) ──────────────────────────────────────────────────────── */
-#hero {
-  position: sticky;
-  top: 0;
-  height: 100vh;
+.section.hero {
+  position: relative;
+  height: 100%;
   width: 100%;
   overflow: hidden;
   background: var(--black);
 }
 
-#frame-img {
+.section.hero img {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -167,7 +166,6 @@ body {
   text-align: center;
   pointer-events: none;
   padding: 0 24px;
-  gap: 16px;
 }
 
 .hero-title {
@@ -187,46 +185,6 @@ body {
   letter-spacing: 0.28em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.72);
-}
-
-/* Scroll hint */
-.scroll-hint {
-  position: absolute;
-  bottom: 44px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  animation: fadeInHint 1.4s 1s both;
-}
-
-@keyframes fadeInHint {
-  from { opacity: 0; transform: translateX(-50%) translateY(10px); }
-  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
-
-.scroll-hint span {
-  font-size: 9px;
-  font-weight: 400;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.4);
-}
-
-.scroll-line {
-  width: 1px;
-  height: 36px;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.45), transparent);
-  animation: lineDrop 1.8s ease-in-out infinite;
-  transform-origin: top;
-}
-
-@keyframes lineDrop {
-  0%   { transform: scaleY(0); opacity: 0; }
-  40%  { transform: scaleY(1); opacity: 1; }
-  100% { transform: scaleY(1); opacity: 0; transform-origin: bottom; }
 }
 
 
