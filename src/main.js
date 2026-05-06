@@ -96,7 +96,7 @@ let galleryActive     = false;
 let galleryExiting    = false; // set on bottom-exit to prevent re-activation mid-scroll
 let galleryExitingTop = false; // set on top-exit to prevent re-activation mid-scroll
 
-const labelOverlay = document.querySelector('.plane-label-overlay');
+let labelOverlay = null; // assigned after engine.init() creates the element
 
 const initObserver = new IntersectionObserver(async (entries) => {
   if (!entries[0].isIntersecting || engine) return;
@@ -105,6 +105,7 @@ const initObserver = new IntersectionObserver(async (entries) => {
   const canvas = gallerySection.querySelector('.webgl');
   engine = new Engine(canvas);
   await engine.init();
+  labelOverlay = document.querySelector('.plane-label-overlay'); // now it exists
   engine.deactivate();
   setupExitCallbacks();
   galleryReady = true;
